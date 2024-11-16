@@ -15,6 +15,17 @@
     - Spring boot
     - Thymeleaf
     - Bootstrap
-    - Hibernate
-    - PostgreSql 
+    - Hibernate 5.6.11.Final
+    - PostgreSql 42.2.9
         
+#### Главная страница / все задачи
+![img.png](img.png)
+
+### Выполненные задачи
+![img_1.png](img_1.png)
+
+### Новые задачи
+![img_2.png](img_2.png)
+
+### Создание новой задачи
+![img_3.png](img_3.png)

@@ -37,33 +37,42 @@ public class TaskController {
     }
 
     @GetMapping("/done")
-    public String getDone(Model model) {
+    public String getDoneTasks(Model model) {
         model.addAttribute("tasks", taskService.findAll().stream().filter(Task::isDone).toList());
         return "tasks/list";
     }
 
     @GetMapping("/new")
-    public String getNew(Model model) {
+    public String getNewTasks(Model model) {
         model.addAttribute("tasks", taskService.findAll().stream().filter(task -> !task.isDone()).toList());
         return "tasks/list";
     }
 
     @PostMapping("/create")
-    public String create(Model model, Task task) {
-        taskService.addTask(task);
-        model.addAttribute("tasks", taskService.findAll());
-        return "tasks/list";
+    public String createTask(Model model, Task task) {
+        try {
+            taskService.addTask(task);
+            model.addAttribute("tasks", taskService.findAll());
+            return "tasks/list";
+        } catch (Exception e) {
+            model.addAttribute("message", e.getMessage());
+            return "errors/404";
+        }
     }
 
     @GetMapping("/create")
-    public String create() {
+    public String createTask() {
         return "tasks/create";
     }
 
     @GetMapping("/done/{id}")
-    public String setDone(@PathVariable int id) {
+    public String setDone(Model model, @PathVariable int id) {
         log.info("Установка флага выполнено");
         Task byId = taskService.findById(id).orElse(null);
+        if (byId == null) {
+            model.addAttribute("message", "Задача с указанным ID не существует");
+            return "errors/404";
+        }
         byId.setDone(true);
         taskService.update(byId);
         return "redirect:/tasks";
@@ -71,14 +80,17 @@ public class TaskController {
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable int id) {
-        log.info("deleting Task");
         taskService.delete(id);
         return "redirect:/tasks";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task) {
-        taskService.update(task);
+    public String update(Model model, @ModelAttribute Task task) {
+        boolean updated = taskService.update(task);
+        if (!updated) {
+            model.addAttribute("message", "Задача с указанным ID не существует");
+            return "errors/404";
+        }
         return "redirect:/tasks";
     }
 }

@@ -11,7 +11,6 @@ import ru.job4j.todo.service.TaskService;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
-
 @Slf4j
 @Controller
 @RequestMapping("/tasks")

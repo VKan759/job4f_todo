@@ -6,7 +6,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +34,7 @@ public class TaskStore {
         Task result = null;
         try {
             session.beginTransaction();
-            Serializable saved = session.save(task);
-            task.setId((Integer) saved);
+            session.save(task);
             result = task;
             session.getTransaction().commit();
         } catch (Exception e) {

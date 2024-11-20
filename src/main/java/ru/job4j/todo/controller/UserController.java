@@ -32,8 +32,8 @@ public class UserController {
 
     @PostMapping("/register")
     public String register(Model model, @ModelAttribute User user) {
-        User save = userService.save(user);
-        if (save == null) {
+        Optional<User> save = userService.save(user);
+        if (save.isEmpty()) {
             model.addAttribute("message", "пользователь существует");
             return "errors/404";
         }

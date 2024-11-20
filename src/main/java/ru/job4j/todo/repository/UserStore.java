@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.User;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 @Repository
@@ -14,13 +15,15 @@ public class UserStore implements UserRepository {
     private final SessionFactory sessionFactory;
 
     @Override
-    public User save(User user) {
+    public Optional<User> save(User user) {
         Session session = sessionFactory.openSession();
-        User result = null;
+        Optional<User> result = Optional.empty();
         try {
             session.beginTransaction();
-            session.save(user);
-            result = user;
+            Serializable saved = session.save(user);
+            if (saved != null) {
+                result = Optional.of(user);
+            }
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();

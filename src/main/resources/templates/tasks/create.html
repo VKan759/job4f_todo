@@ -22,13 +22,13 @@
     <div class="container">
         <form class="mt-3" th:action="@{/tasks/create}" method="post" enctype="multipart/form-data">
             <div class="mb-3">
-                <label for="description" class="form-label"><b>Название</b></label>
-                <input type="text" class="form-control" id="description" name="description"
+                <label for="title" class="form-label"><b>Название</b></label>
+                <input type="text" class="form-control" id="title" name="title"
                        placeholder="Опишите задачу">
             </div>
             <div class="mb-3">
-                <label for="fullDescription" class="form-label"><b>Описание</b></label>
-                <textarea class="form-control" id="fullDescription" name="fullDescription" rows="25"
+                <label for="description" class="form-label"><b>Описание</b></label>
+                <textarea class="form-control" id="description" name="description" rows="25"
                           placeholder="Укажите полное описание задачи"></textarea>
             </div>
 

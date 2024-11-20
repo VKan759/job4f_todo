@@ -37,26 +37,21 @@ public class TaskController {
 
     @GetMapping("/done")
     public String getDoneTasks(Model model) {
-        model.addAttribute("tasks", taskService.findAll().stream().filter(Task::isDone).toList());
+        model.addAttribute("tasks", taskService.findTaskByStatus(true));
         return "tasks/list";
     }
 
     @GetMapping("/new")
     public String getNewTasks(Model model) {
-        model.addAttribute("tasks", taskService.findAll().stream().filter(task -> !task.isDone()).toList());
+        model.addAttribute("tasks", taskService.findTaskByStatus(false));
         return "tasks/list";
     }
 
     @PostMapping("/create")
     public String createTask(Model model, Task task) {
-        try {
-            taskService.addTask(task);
-            model.addAttribute("tasks", taskService.findAll());
-            return "tasks/list";
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
-            return "errors/404";
-        }
+        taskService.addTask(task);
+        model.addAttribute("tasks", taskService.findAll());
+        return "tasks/list";
     }
 
     @GetMapping("/create")
@@ -67,19 +62,17 @@ public class TaskController {
     @GetMapping("/done/{id}")
     public String setDone(Model model, @PathVariable int id) {
         log.info("Установка флага выполнено");
-        Task byId = taskService.findById(id).orElse(null);
-        if (byId == null) {
-            model.addAttribute("message", "Задача с указанным ID не существует");
-            return "errors/404";
-        }
-        byId.setDone(true);
-        taskService.update(byId);
+        taskService.setDoneById(id);
         return "redirect:/tasks";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable int id) {
-        taskService.delete(id);
+    public String delete(@PathVariable int id, Model model) {
+        boolean delete = taskService.delete(id);
+        if (!delete) {
+            model.addAttribute("message", "Не удалось удалить задачу");
+            return "errors/404";
+        }
         return "redirect:/tasks";
     }
 

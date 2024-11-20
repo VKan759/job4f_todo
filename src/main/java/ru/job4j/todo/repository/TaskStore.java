@@ -19,7 +19,7 @@ public class TaskStore {
         Session session = sf.openSession();
         try {
             session.beginTransaction();
-            result = session.createQuery("from Task").list();
+            result = session.createQuery("from Task", Task.class).list();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
@@ -45,20 +45,36 @@ public class TaskStore {
         return result;
     }
 
-    public Optional<Task> findById(int id) {
+    public List<Task> findTasksByStatus(boolean taskStatus) {
         Session session = sf.openSession();
-        Task result = null;
+        List<Task> result = List.of();
         try {
             session.beginTransaction();
-            result = session.createQuery("from Task where id = :fId", Task.class)
-                    .setParameter("fId", id).uniqueResult();
+            result = session.createQuery("from Task where done = :fStatus", Task.class)
+                    .setParameter("fStatus", taskStatus).list();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return Optional.ofNullable(result);
+        return result;
+    }
+
+    public Optional<Task> findById(int id) {
+        Session session = sf.openSession();
+        Optional<Task> result = Optional.empty();
+        try {
+            session.beginTransaction();
+            result = session.createQuery("from Task where id = :fId", Task.class)
+                    .setParameter("fId", id).uniqueResultOptional();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+        return result;
     }
 
     public boolean update(Task task) {
@@ -67,13 +83,13 @@ public class TaskStore {
         try {
             session.beginTransaction();
             changedRows = session.createQuery("""
-                            update Task set description = :fDescription, created = :fCreated, done = :fDone, full_description = :fullDescription where id  = :fId
+                            update Task set title = :fTitle, created = :fCreated, done = :fDone, description = :fDescription where id  = :fId
                             """)
-                    .setParameter("fDescription", task.getDescription())
+                    .setParameter("fTitle", task.getTitle())
                     .setParameter("fCreated", task.getCreated())
                     .setParameter("fDone", task.isDone())
                     .setParameter("fId", task.getId())
-                    .setParameter("fullDescription", task.getFullDescription())
+                    .setParameter("fDescription", task.getDescription())
                     .executeUpdate();
             session.getTransaction().commit();
         } catch (Exception e) {
@@ -82,6 +98,22 @@ public class TaskStore {
             session.close();
         }
         return changedRows > 0;
+    }
+
+    public boolean setDoneById(int id) {
+        Session session = sf.openSession();
+        int setDoneTasks = 0;
+        try {
+            session.beginTransaction();
+            setDoneTasks = session.createQuery("update Task set done = true where id = :fId")
+                    .setParameter("fId", id).executeUpdate();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+        return setDoneTasks > 0;
     }
 
     public boolean delete(int id) {

@@ -1,4 +1,4 @@
-INSERT INTO tasks (description, created, done)
+INSERT INTO tasks (title, created, done)
 VALUES 
     ('Задача 1', '2024-11-13 10:00:00', false),
     ('Задача 2', '2024-11-13 11:00:00', true),

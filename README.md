@@ -17,15 +17,32 @@
     - Bootstrap
     - Hibernate 5.6.11.Final
     - PostgreSql 42.2.9
-        
+
+#### Запуск проекта
+
+- Необходимо открыть класс src/main/java/ru/job4j/todo/Job4jTodoApplication.java и запустить метод main().
+    - Для отправки запросов на сервер необходимо:
+      1. Выполнить процедуру регистрации пользователя и входа в систему:
+          1.1 пройти по ссылке http://localhost:8080/users/register и выполнить
+          регистрацию пользователя
+          1.2 Для входа в систему необъходимо по ссылке http://localhost:8080/users/login выполнить вход, далее будет
+          выполнено перенаправление на страницу с отображением всех задач.
+    - либо
+      2. Выполнить вход по следующим данным: логин - "user@mail.ru", пароль - "111", далее будет
+      выполнено перенаправление на страницу с отображением всех задач.
+
 #### Главная страница / все задачи
-![img.png](img.png)
+
+![img.png](src/main/java/ru/job4j/todo/files/img.png)
 
 ### Выполненные задачи
-![img_1.png](img_1.png)
+
+![img_1.png](src/main/java/ru/job4j/todo/files/img_1.png)
 
 ### Новые задачи
-![img_2.png](img_2.png)
+
+![img_2.png](src/main/java/ru/job4j/todo/files/img_2.png)
 
 ### Создание новой задачи
-![img_3.png](img_3.png)
+
+![img_3.png](src/main/java/ru/job4j/todo/files/img_3.png)

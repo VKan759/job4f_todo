@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface TaskService {
     List<Task> findAll();
 
-    Task addTask(Task task);
+    Optional<Task> addTask(Task task);
 
     Optional<Task> findById(int id);
 

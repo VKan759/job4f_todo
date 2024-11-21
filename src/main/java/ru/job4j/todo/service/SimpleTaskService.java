@@ -19,7 +19,7 @@ public class SimpleTaskService implements TaskService {
     }
 
     @Override
-    public Task addTask(Task task) {
+    public Optional<Task> addTask(Task task) {
         return taskStore.addTask(task);
     }
 

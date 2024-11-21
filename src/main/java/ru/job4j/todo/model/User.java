@@ -11,6 +11,7 @@ import javax.persistence.*;
 @EqualsAndHashCode
 @Getter
 @Setter
+@ToString
 public class User {
     @Id
     @EqualsAndHashCode.Exclude
@@ -24,6 +25,7 @@ public class User {
     @Column(unique = true)
     private String email;
 
+    @ToString.Exclude
     @NonNull
     private String password;
 }

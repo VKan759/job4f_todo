@@ -9,6 +9,7 @@
     <include file="scripts/002_ddl_insert_into_table_tasks.sql" relativeToChangelogFile="true"/>
     <include file="scripts/003_ddl_create_table_user_todo.sql" relativeToChangelogFile="true"/>
     <include file="scripts/004_ddl_insert_into_table_todo_user.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/005_dml_add_column_to_table_tasks.sql" relativeToChangelogFile="true"/>
 
 
 </databaseChangeLog>

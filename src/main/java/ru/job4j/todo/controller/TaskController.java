@@ -48,10 +48,9 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String createTask(Model model, Task task) {
+    public String createTask(Task task) {
         taskService.addTask(task);
-        model.addAttribute("tasks", taskService.findAll());
-        return "tasks/list";
+        return "redirect:/tasks";
     }
 
     @GetMapping("/create")
@@ -62,7 +61,11 @@ public class TaskController {
     @GetMapping("/done/{id}")
     public String setDone(Model model, @PathVariable int id) {
         log.info("Установка флага выполнено");
-        taskService.setDoneById(id);
+        boolean done = taskService.setDoneById(id);
+        if (!done) {
+            model.addAttribute("message", "Не удалось установить значение \"Выполнено\"");
+            return "errors/404";
+        }
         return "redirect:/tasks";
     }
 

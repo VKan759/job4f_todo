@@ -1,13 +1,16 @@
 package ru.job4j.todo.repository;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Repository
 @AllArgsConstructor
 public class TaskStore {
@@ -22,8 +25,9 @@ public class TaskStore {
             crudRepository.run(session -> session.persist(task));
             return Optional.of(task);
         } catch (Exception e) {
-            return Optional.empty();
+            log.error("Не удалось добавить задачу");
         }
+        return Optional.empty();
     }
 
     public List<Task> findTasksByStatus(boolean taskStatus) {
@@ -34,9 +38,21 @@ public class TaskStore {
         return crudRepository.optional("from Task where id = :fId", Task.class, Map.of("fId", id));
     }
 
-    public boolean update(Task task) {
-        Task mergedTask = (Task) crudRepository.tx(session -> session.merge(task));
-        return !task.equals(mergedTask);
+    public boolean update(Task task, User user) {
+        return crudRepository.makeChanges("""
+                update Task set description = :fDescription, 
+                created = :fCreated, 
+                done = :fDone, 
+                user_id = :fUserId 
+                where id = :fId and title = :fTitle
+                """,
+                Map.of("fDescription", task.getDescription(),
+                "fCreated", task.getCreated(),
+                        "fDone", task.isDone(),
+                        "fUserId", user.getId(),
+                        "fId", task.getId(),
+                        "fTitle", task.getTitle()
+                ));
     }
 
     public boolean setDoneById(int id) {

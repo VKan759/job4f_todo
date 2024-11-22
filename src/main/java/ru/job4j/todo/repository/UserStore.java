@@ -1,12 +1,14 @@
 package ru.job4j.todo.repository;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.User;
 
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Repository
 @AllArgsConstructor
 public class UserStore implements UserRepository {
@@ -18,8 +20,9 @@ public class UserStore implements UserRepository {
             crudRepository.run(session -> session.persist(user));
             return Optional.of(user);
         } catch (Exception e) {
-            return Optional.empty();
+            log.error("Не удалось добавить пользователя");
         }
+        return Optional.empty();
     }
 
     @Override

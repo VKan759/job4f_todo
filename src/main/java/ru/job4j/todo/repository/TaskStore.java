@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.model.User;
 
 import java.util.List;
 import java.util.Map;
@@ -38,18 +37,13 @@ public class TaskStore {
         return crudRepository.optional("from Task where id = :fId", Task.class, Map.of("fId", id));
     }
 
-    public boolean update(Task task, User user) {
+    public boolean update(Task task) {
         return crudRepository.makeChanges("""
-                update Task set description = :fDescription, 
-                created = :fCreated, 
-                done = :fDone, 
-                user_id = :fUserId 
-                where id = :fId and title = :fTitle
+                update Task set description = :fDescription,
+                title = :fTitle,
+                where id = :fId
                 """,
                 Map.of("fDescription", task.getDescription(),
-                "fCreated", task.getCreated(),
-                        "fDone", task.isDone(),
-                        "fUserId", user.getId(),
                         "fId", task.getId(),
                         "fTitle", task.getTitle()
                 ));

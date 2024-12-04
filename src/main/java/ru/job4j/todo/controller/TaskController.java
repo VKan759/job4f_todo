@@ -82,8 +82,8 @@ public class TaskController {
     }
 
     @PostMapping("/update")
-    public String update(Model model, @ModelAttribute Task task, @SessionAttribute User user) {
-        boolean updated = taskService.update(task, user);
+    public String update(Model model, @ModelAttribute Task task) {
+        boolean updated = taskService.update(task);
         if (!updated) {
             model.addAttribute("message", "Задача с указанным ID не существует");
             return "errors/404";

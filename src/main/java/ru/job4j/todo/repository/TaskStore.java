@@ -16,7 +16,7 @@ public class TaskStore {
     private final CrudRepository crudRepository;
 
     public List<Task> findAll() {
-        return crudRepository.query("from Task", Task.class);
+        return crudRepository.query("from Task t join fetch t.priority", Task.class);
     }
 
     public Optional<Task> addTask(Task task) {
@@ -30,11 +30,14 @@ public class TaskStore {
     }
 
     public List<Task> findTasksByStatus(boolean taskStatus) {
-        return crudRepository.query("from Task where done = :fDone", Task.class, Map.of("fDone", taskStatus));
+        return crudRepository.query("from Task join fetch task.priority where done = :fDone", Task.class, Map.of(
+                "fDone",
+                taskStatus));
     }
 
     public Optional<Task> findById(int id) {
-        return crudRepository.optional("from Task where id = :fId", Task.class, Map.of("fId", id));
+        return crudRepository.optional("from Task join fetch task.priority where id = :fId", Task.class, Map.of("fId",
+                id));
     }
 
     public boolean update(Task task) {

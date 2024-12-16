@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
 import javax.servlet.http.HttpSession;
@@ -18,6 +20,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class TaskController {
     private final TaskService taskService;
+    private final PriorityService priorityService;
 
     @GetMapping
     public String getAll(Model model) {
@@ -33,6 +36,7 @@ public class TaskController {
             return "errors/404";
         }
         model.addAttribute("task", byId.get());
+        model.addAttribute("priorities", priorityService.findAll());
         return "tasks/one";
     }
 
@@ -49,14 +53,15 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String createTask(Task task, @SessionAttribute User user) {
+    public String createTask(@ModelAttribute Task task, @SessionAttribute User user) {
         task.setUser(user);
         taskService.addTask(task);
         return "redirect:/tasks";
     }
 
     @GetMapping("/create")
-    public String createTask() {
+    public String createTask(Model model) {
+        model.addAttribute("priorities", priorityService.findAll());
         return "tasks/create";
     }
 
@@ -83,6 +88,8 @@ public class TaskController {
 
     @PostMapping("/update")
     public String update(Model model, @ModelAttribute Task task) {
+        Optional<Priority> priority = priorityService.findById(task.getPriority().getId());
+        task.setPriority(priority.get());
         boolean updated = taskService.update(task);
         if (!updated) {
             model.addAttribute("message", "Задача с указанным ID не существует");

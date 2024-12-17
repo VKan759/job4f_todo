@@ -88,8 +88,6 @@ public class TaskController {
 
     @PostMapping("/update")
     public String update(Model model, @ModelAttribute Task task) {
-        Optional<Priority> priority = priorityService.findById(task.getPriority().getId());
-        task.setPriority(priority.get());
         boolean updated = taskService.update(task);
         if (!updated) {
             model.addAttribute("message", "Задача с указанным ID не существует");

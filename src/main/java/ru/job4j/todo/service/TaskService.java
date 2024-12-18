@@ -9,11 +9,11 @@ import java.util.Optional;
 public interface TaskService {
     List<Task> findAll();
 
-    Optional<Task> addTask(Task task);
+    Optional<Task> addTask(Task task, List<Integer> categoryIds);
 
     Optional<Task> findById(int id);
 
-    boolean update(Task task);
+    boolean update(Task task, List<Integer> categoryIds);
 
     boolean delete(int id);
 

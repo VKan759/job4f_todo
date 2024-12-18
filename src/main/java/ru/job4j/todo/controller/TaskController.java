@@ -5,13 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -21,10 +22,12 @@ import java.util.Optional;
 public class TaskController {
     private final TaskService taskService;
     private final PriorityService priorityService;
+    private final CategoryService categoryService;
 
     @GetMapping
     public String getAll(Model model) {
         model.addAttribute("tasks", taskService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/list";
     }
 
@@ -37,6 +40,7 @@ public class TaskController {
         }
         model.addAttribute("task", byId.get());
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/one";
     }
 
@@ -53,15 +57,17 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String createTask(@ModelAttribute Task task, @SessionAttribute User user) {
+    public String createTask(@ModelAttribute Task task, @SessionAttribute User user,
+                             @RequestParam List<Integer> categoryIds) {
         task.setUser(user);
-        taskService.addTask(task);
+        taskService.addTask(task, categoryIds);
         return "redirect:/tasks";
     }
 
     @GetMapping("/create")
     public String createTask(Model model) {
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/create";
     }
 
@@ -87,8 +93,8 @@ public class TaskController {
     }
 
     @PostMapping("/update")
-    public String update(Model model, @ModelAttribute Task task) {
-        boolean updated = taskService.update(task);
+    public String update(Model model, @ModelAttribute Task task, @RequestParam List<Integer> categoryIds) {
+        boolean updated = taskService.update(task, categoryIds);
         if (!updated) {
             model.addAttribute("message", "Задача с указанным ID не существует");
             return "errors/404";

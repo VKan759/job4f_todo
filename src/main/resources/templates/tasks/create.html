@@ -40,9 +40,17 @@
                     </option>
                 </select>
             </div>
-
-
-
+            <div class="mb-3">
+                <label for="category"><b>Категория</b></label>
+                <div id="category">
+                    <div th:each="category : ${categories}">
+                        <label>
+                            <input type="checkbox" name="categoryIds" th:value="${category.id}">
+                            <span th:text="${category.name}"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
             <div class="mb-3 row">
                 <div class="col-6"></div>
                 <div class="col-6">

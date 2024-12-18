@@ -19,8 +19,8 @@ public class SimpleTaskService implements TaskService {
     }
 
     @Override
-    public Optional<Task> addTask(Task task) {
-        return taskStore.addTask(task);
+    public Optional<Task> addTask(Task task, List<Integer> categoryIds) {
+        return taskStore.addTask(task, categoryIds);
     }
 
     @Override
@@ -29,8 +29,8 @@ public class SimpleTaskService implements TaskService {
     }
 
     @Override
-    public boolean update(Task task) {
-        return taskStore.update(task);
+    public boolean update(Task task, List<Integer> categoryIds) {
+        return taskStore.update(task, categoryIds);
     }
 
     @Override

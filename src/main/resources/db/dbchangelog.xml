@@ -11,6 +11,8 @@
     <include file="scripts/004_ddl_insert_into_table_todo_user.sql" relativeToChangelogFile="true"/>
     <include file="scripts/005_dml_add_column_to_table_tasks.sql" relativeToChangelogFile="true"/>
     <include file="scripts/006_create_table_priority.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/007_create_table_category.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/008_create_table_participates.sql" relativeToChangelogFile="true"/>
 
 
 </databaseChangeLog>

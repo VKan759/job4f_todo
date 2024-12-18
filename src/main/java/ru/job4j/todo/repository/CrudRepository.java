@@ -47,6 +47,17 @@ public class CrudRepository {
         return tx(command) > 0;
     }
 
+    public boolean makeChangesNativeQuery(String query, Map<String, Object> map) {
+        Function<Session, Integer> command = session -> {
+            var sessionQuery = session.createNativeQuery(query);
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                sessionQuery.setParameter(entry.getKey(), entry.getValue());
+            }
+            return sessionQuery.executeUpdate();
+        };
+        return tx(command) > 0;
+    }
+
     public void run(Consumer<Session> command) {
         tx(session -> {
             command.accept(session);

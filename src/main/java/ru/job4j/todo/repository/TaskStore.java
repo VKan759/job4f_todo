@@ -16,12 +16,22 @@ public class TaskStore {
     private final CrudRepository crudRepository;
 
     public List<Task> findAll() {
-        return crudRepository.query("from Task t join fetch t.priority", Task.class);
+        return crudRepository.query("""
+                FROM Task t 
+                JOIN FETCH t.priority 
+                LEFT JOIN FETCH t.categories
+                """, Task.class).stream().distinct().toList();
     }
 
-    public Optional<Task> addTask(Task task) {
+    public Optional<Task> addTask(Task task, List<Integer> categoryIds) {
         try {
             crudRepository.run(session -> session.persist(task));
+            categoryIds.forEach(categoryId ->
+                    crudRepository.makeChangesNativeQuery("""
+                        insert into participates (task_id, category_id) values 
+                        (:taskId, :categoryId)""", Map.of("taskId", task.getId(),
+                            "categoryId", categoryId)
+                    ));
             return Optional.of(task);
         } catch (Exception e) {
             log.error("Не удалось добавить задачу");
@@ -30,24 +40,42 @@ public class TaskStore {
     }
 
     public List<Task> findTasksByStatus(boolean taskStatus) {
-        return crudRepository.query("from Task task join fetch task.priority where done = :fDone", Task.class, Map.of(
-                "fDone",
-                taskStatus));
+        return crudRepository.query("""
+                        from Task t 
+                        join fetch t.priority 
+                        left join fetch t.categories 
+                        where t.done = :fDone
+                        """,
+                Task.class, Map.of(
+                        "fDone",
+                        taskStatus)).stream().distinct().toList();
     }
 
     public Optional<Task> findById(int id) {
-        return crudRepository.optional("from Task task join fetch task.priority where task.id = :fId", Task.class,
+        return crudRepository.optional("""
+                        from Task t 
+                        join fetch t.priority 
+                        left join fetch t.categories
+                        where t.id = :fId""", Task.class,
                 Map.of("fId",
-                id));
+                        id));
     }
 
-    public boolean update(Task task) {
+    public boolean update(Task task, List<Integer> categoryIds) {
+        crudRepository.makeChangesNativeQuery("delete from participates where task_id = :fTaskId", Map.of("fTaskId",
+                task.getId()));
+        categoryIds.forEach(categoryId ->
+                crudRepository.makeChangesNativeQuery("""
+                        insert into participates (task_id, category_id) values 
+                        (:taskId, :categoryId)""", Map.of("taskId", task.getId(),
+                        "categoryId", categoryId)
+                ));
         return crudRepository.makeChanges("""
-                update Task set description = :fDescription,
-                title = :fTitle,
-                priority = :fPriority
-                where id = :fId
-                """,
+                        update Task set description = :fDescription,
+                        title = :fTitle,
+                        priority = :fPriority
+                        where id = :fId
+                        """,
                 Map.of("fDescription", task.getDescription(),
                         "fId", task.getId(),
                         "fTitle", task.getTitle(),

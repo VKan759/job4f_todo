@@ -25,8 +25,8 @@ public class TaskController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public String getAll(Model model) {
-        model.addAttribute("tasks", taskService.findAll());
+    public String getAll(Model model, @SessionAttribute User user) {
+        model.addAttribute("tasks", taskService.findAll(user));
         model.addAttribute("categories", categoryService.findAll());
         return "tasks/list";
     }
@@ -45,14 +45,14 @@ public class TaskController {
     }
 
     @GetMapping("/done")
-    public String getDoneTasks(Model model) {
-        model.addAttribute("tasks", taskService.findTaskByStatus(true));
+    public String getDoneTasks(Model model, @SessionAttribute User user) {
+        model.addAttribute("tasks", taskService.findTaskByStatus(true, user));
         return "tasks/list";
     }
 
     @GetMapping("/new")
-    public String getNewTasks(Model model) {
-        model.addAttribute("tasks", taskService.findTaskByStatus(false));
+    public String getNewTasks(Model model, @SessionAttribute User user) {
+        model.addAttribute("tasks", taskService.findTaskByStatus(false, user));
         return "tasks/list";
     }
 

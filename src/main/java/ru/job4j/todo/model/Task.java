@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +30,7 @@ public class Task {
     @NonNull
     private String description;
 
-    private LocalDateTime created = LocalDateTime.now().truncatedTo(TimeUnit.MINUTES.toChronoUnit());
+    private ZonedDateTime created = ZonedDateTime.now().truncatedTo(TimeUnit.MINUTES.toChronoUnit());
 
     private boolean done;
 

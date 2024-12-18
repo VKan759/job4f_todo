@@ -3,6 +3,7 @@ package ru.job4j.todo.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.repository.TaskStore;
 
 import java.util.List;
@@ -14,8 +15,8 @@ public class SimpleTaskService implements TaskService {
     private final TaskStore taskStore;
 
     @Override
-    public List<Task> findAll() {
-        return taskStore.findAll();
+    public List<Task> findAll(User user) {
+        return taskStore.findAll(user);
     }
 
     @Override
@@ -39,8 +40,8 @@ public class SimpleTaskService implements TaskService {
     }
 
     @Override
-    public List<Task> findTaskByStatus(boolean taskStatus) {
-        return taskStore.findTasksByStatus(taskStatus);
+    public List<Task> findTaskByStatus(boolean taskStatus, User user) {
+        return taskStore.findTasksByStatus(taskStatus, user);
     }
 
     @Override

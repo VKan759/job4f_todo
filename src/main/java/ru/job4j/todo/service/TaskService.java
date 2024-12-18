@@ -2,12 +2,13 @@ package ru.job4j.todo.service;
 
 
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface TaskService {
-    List<Task> findAll();
+    List<Task> findAll(User user);
 
     Optional<Task> addTask(Task task, List<Integer> categoryIds);
 
@@ -17,7 +18,7 @@ public interface TaskService {
 
     boolean delete(int id);
 
-    List<Task> findTaskByStatus(boolean taskStatus);
+    List<Task> findTaskByStatus(boolean taskStatus, User user);
 
     boolean setDoneById(int id);
 }

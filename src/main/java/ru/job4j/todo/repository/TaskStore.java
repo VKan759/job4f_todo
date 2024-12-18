@@ -3,8 +3,13 @@ package ru.job4j.todo.repository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,12 +20,17 @@ import java.util.Optional;
 public class TaskStore {
     private final CrudRepository crudRepository;
 
-    public List<Task> findAll() {
-        return crudRepository.query("""
+    public List<Task> findAll(User user) {
+        List<Task> tasks = crudRepository.query("""
                 FROM Task t 
                 JOIN FETCH t.priority 
                 LEFT JOIN FETCH t.categories
                 """, Task.class).stream().distinct().toList();
+        for (Task task : tasks) {
+            task.setCreated(
+                    task.getCreated().withZoneSameInstant(ZoneId.of(user.getTimezone())));
+        }
+        return tasks;
     }
 
     public Optional<Task> addTask(Task task, List<Integer> categoryIds) {
@@ -28,8 +38,8 @@ public class TaskStore {
             crudRepository.run(session -> session.persist(task));
             categoryIds.forEach(categoryId ->
                     crudRepository.makeChangesNativeQuery("""
-                        insert into participates (task_id, category_id) values 
-                        (:taskId, :categoryId)""", Map.of("taskId", task.getId(),
+                            insert into participates (task_id, category_id) values 
+                            (:taskId, :categoryId)""", Map.of("taskId", task.getId(),
                             "categoryId", categoryId)
                     ));
             return Optional.of(task);
@@ -39,8 +49,8 @@ public class TaskStore {
         return Optional.empty();
     }
 
-    public List<Task> findTasksByStatus(boolean taskStatus) {
-        return crudRepository.query("""
+    public List<Task> findTasksByStatus(boolean taskStatus, User user) {
+        List<Task> tasks = crudRepository.query("""
                         from Task t 
                         join fetch t.priority 
                         left join fetch t.categories 
@@ -49,6 +59,11 @@ public class TaskStore {
                 Task.class, Map.of(
                         "fDone",
                         taskStatus)).stream().distinct().toList();
+        for (Task task : tasks) {
+            task.setCreated(
+                    task.getCreated().withZoneSameInstant(ZoneId.of(user.getTimezone())));
+        }
+        return tasks;
     }
 
     public Optional<Task> findById(int id) {

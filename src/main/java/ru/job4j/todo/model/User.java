@@ -28,4 +28,8 @@ public class User {
     @ToString.Exclude
     @NonNull
     private String password;
+
+    @NonNull
+    @Column(name = "user_zone")
+    private String timezone;
 }

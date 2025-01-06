@@ -3,13 +3,10 @@ package ru.job4j.todo.repository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.SessionAttribute;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,17 +17,12 @@ import java.util.Optional;
 public class TaskStore {
     private final CrudRepository crudRepository;
 
-    public List<Task> findAll(User user) {
-        List<Task> tasks = crudRepository.query("""
+    public List<Task> findAll() {
+        return crudRepository.query("""
                 FROM Task t 
                 JOIN FETCH t.priority 
                 LEFT JOIN FETCH t.categories
                 """, Task.class).stream().distinct().toList();
-        for (Task task : tasks) {
-            task.setCreated(
-                    task.getCreated().withZoneSameInstant(ZoneId.of(user.getTimezone())));
-        }
-        return tasks;
     }
 
     public Optional<Task> addTask(Task task, List<Integer> categoryIds) {

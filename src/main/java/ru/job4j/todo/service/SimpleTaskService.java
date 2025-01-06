@@ -6,6 +6,7 @@ import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.repository.TaskStore;
 
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +17,12 @@ public class SimpleTaskService implements TaskService {
 
     @Override
     public List<Task> findAll(User user) {
-        return taskStore.findAll(user);
+        List<Task> taskList = taskStore.findAll();
+        for (Task task : taskList) {
+            task.setCreated(
+                    task.getCreated().withZoneSameInstant(ZoneId.of(user.getTimezone())));
+        }
+        return taskList;
     }
 
     @Override

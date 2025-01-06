@@ -2,18 +2,22 @@ package ru.job4j.todo.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.repository.CategoryRepository;
 import ru.job4j.todo.repository.TaskStore;
 
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class SimpleTaskService implements TaskService {
     private final TaskStore taskStore;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public List<Task> findAll(User user) {
@@ -27,7 +31,11 @@ public class SimpleTaskService implements TaskService {
 
     @Override
     public Optional<Task> addTask(Task task, List<Integer> categoryIds) {
-        return taskStore.addTask(task, categoryIds);
+        List<Category> categories = categoryIds.stream()
+                .filter(Objects::nonNull).distinct()
+                .map(id -> categoryRepository.findById(id).orElse(null)).filter(Objects::nonNull).toList();
+        task.setCategories(categories);
+        return taskStore.addTask(task);
     }
 
     @Override

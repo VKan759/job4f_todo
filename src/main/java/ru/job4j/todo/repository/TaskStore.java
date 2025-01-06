@@ -25,15 +25,9 @@ public class TaskStore {
                 """, Task.class).stream().distinct().toList();
     }
 
-    public Optional<Task> addTask(Task task, List<Integer> categoryIds) {
+    public Optional<Task> addTask(Task task) {
         try {
             crudRepository.run(session -> session.persist(task));
-            categoryIds.forEach(categoryId ->
-                    crudRepository.makeChangesNativeQuery("""
-                            insert into participates (task_id, category_id) values 
-                            (:taskId, :categoryId)""", Map.of("taskId", task.getId(),
-                            "categoryId", categoryId)
-                    ));
             return Optional.of(task);
         } catch (Exception e) {
             log.error("Не удалось добавить задачу");

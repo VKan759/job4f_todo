@@ -22,4 +22,8 @@ public class CategoryRepository {
     public Optional<Category> findById(int id) {
         return repository.optional("from Category c where c.id = :fId", Category.class, Map.of("fId", id));
     }
+
+    public List<Category> findAllWhenIds(List<Integer> ids) {
+        return repository.query("from Category c where c.id in :fIds", Category.class, Map.of("fIds", ids));
+    }
 }

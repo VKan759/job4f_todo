@@ -31,9 +31,9 @@ public class SimpleTaskService implements TaskService {
 
     @Override
     public Optional<Task> addTask(Task task, List<Integer> categoryIds) {
-        List<Category> categories = categoryIds.stream()
-                .filter(Objects::nonNull).distinct()
-                .map(id -> categoryRepository.findById(id).orElse(null)).filter(Objects::nonNull).toList();
+        List<Integer> ids = categoryIds.stream()
+                .filter(Objects::nonNull).distinct().toList();
+        List<Category> categories = categoryRepository.findAllWhenIds(ids);
         task.setCategories(categories);
         return taskStore.addTask(task);
     }
